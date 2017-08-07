@@ -1,0 +1,173 @@
+<!doctype html>
+<head>
+    <meta charset="UTF-8">
+    <title>百度翻译</title>
+    <link rel="icon" type="image/png" href="http://fanyi.baidu.com/static/translation/img/favicon/favicon-32x32_ca689c3.png" sizes="32x32">
+    <style>
+        #before{
+            width: 500px;
+            height: 30px;
+            font-size:17px; 
+            letter-spacing: 1px;
+            padding-left: 2px;
+            font-weight: 300;
+        }
+        #btn{
+            position: relative;
+            height: 36px;
+            width: 80px;
+            margin-left: -5px;
+            cursor: pointer;
+        }
+        .box{
+            width: 600px;
+            height: 100px;
+            position: absolute;
+            top:40%;
+            left: 30%;
+        }
+        body{
+            background: url(816.jpg);
+            background-position:top center; 
+            background-repeat: no-repeat;
+            background-attachment:fixed;
+        }
+        .result{
+            display: inline-block;
+            position: absolute;
+            top:48%;
+            left: 30%;
+            /*width: 502px;*/
+            width: 582px;
+            height: 200px;
+            text-align: center;
+            line-height: 40px;
+            font-size: 20px;
+            font-weight: 500;
+            color: #000;
+        }
+        .fontH{
+            font-family:"黑体";
+            letter-spacing: 1px;
+        }
+        .fontF{
+            font-family: Arial,"PingFang SC","Hiragino Sans GB",STHeiti,"Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
+        }
+        .img{
+            position: fixed;
+            top:19%;
+            left: 40%;
+        }
+        .complany{
+            position: absolute;
+            bottom: 23px;
+            left: 45%;
+            font-size: 12px;
+            text-align: center;
+            text-decoration: none;
+            color:rgba(255,255,255,.8);
+        }
+        ::selection{
+            background-color:rgba(0,0,0,0);
+        }
+        #before::selection{
+            background-color:rgba(0,0,0,.2);
+        }
+        .result::selection{
+            color:rgba(255,255,255,.8);
+        }
+        @media(max-height: 500px){
+            .img{
+                display: none;
+            }
+        }
+        @media(max-width: 1000px){
+            .img{
+                left: 45%;
+            }
+        }
+        @media(max-width: 900px){
+            .img{
+                left: 34%;
+            }
+            .box{
+                left: 10%;
+            }
+            .result{
+                left: 10%;
+            }
+            .a{
+                left: 40%;
+            }
+        }
+         @media(max-width: 680px){
+            .box{
+                left: 15px;
+            }
+            .img{
+                left:180px;
+            }
+         }
+    </style>
+</head>
+<body>
+    <img class="img" src="https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/logo_white_fe6da1ec.png" width="270" height="129">
+    <div class="box">
+    <input type="text" id="before" value="" placeholder="">
+    <input type="submit" value="翻译" id="btn">
+    </div>
+    <div id="result" class="result"></div>
+    <a href="" class="complany">百度翻译提供技术支持</a>
+    <script src="http://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="./md5.js"></script>
+    <script type="text/javascript">
+
+    var oBefore = document.getElementById('before');
+    var oAfter = document.getElementById('after');
+    var oBtn = document.getElementById('btn');
+    var oResult = document.getElementById('result');
+    oBefore.onkeyup = oBtn.onclick = function(){
+        var appid = '2015063000000001';
+        var key = '12345678';
+        var salt = (new Date).getTime();
+        if(!oBefore.value){
+            oResult.innerHTML = '';
+        }
+        var query = oBefore.value;
+        // 多个query可以用\n连接  如 query='apple\norange\nbanana\npear'
+        var zz = /^[a-z\sA-Z]+/;
+        if(zz.test(query)){
+            var from = 'en';
+            var to = 'zh';
+            oResult.className="result fontH";
+        }
+        else{
+            var from = 'zn';
+            var to = 'en';
+            oResult.className="result fontF";
+        }
+        var str1 = appid + query + salt +key;
+        var sign = MD5(str1);
+        var oData = null;
+        $.ajax({
+            url: 'http://api.fanyi.baidu.com/api/trans/vip/translate',
+            type: 'get',
+            dataType: 'jsonp',
+            data: {
+                q: query,
+                appid: appid,
+                salt: salt,
+                from: from,
+                to: to,
+                sign: sign
+            },
+            success: function (data) {
+                console.log(data);
+                oData = data.trans_result[0].dst;
+                oResult.innerHTML = oData;
+            }
+        });
+    }
+
+    </script>
+</body>
